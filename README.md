@@ -1,0 +1,1 @@
+# nsambat-compression-strength-estimator
