@@ -1,0 +1,231 @@
+<html>
+  <head>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.12/vue.min.js"
+      integrity="sha512-BKbSR+cfyxLdMAsE0naLReFSLg8/pjbgfxHh/k/kUC82Hy7r6HtR5hLhobaln2gcTvzkyyehrdREdjpsQwy2Jw=="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-grid.min.css"
+      integrity="sha512-cKoGpmS4czjv58PNt1YTHxg0wUDlctZyp9KUxQpdbAft+XqnyKvDvcGX0QYCgCohQenOuyGSl8l1f7/+axAqyg=="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap-reboot.min.css"
+      integrity="sha512-wV3xzHEw4kJUF4G0fyXSefKmUVhwwbOdZinJvOxmysxAXSZBl17porgPOcQBDBQTEwgGevxXGWAAQ/UPaSd0nw=="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
+      integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA=="
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+      integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+      crossorigin="anonymous"
+    ></script>
+    <!-- jQuery Modal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css"
+    />
+    <style>
+      body {
+        background-image: url("/static/app-background.jpg");
+        background-size: cover;
+      }
+      #app {
+        width: 400px;
+        transform: translateY(30%);
+      }
+      #hello-world{
+        max-height:200px;
+        max-width:400px;
+        background-color: transparent;
+        padding:0px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="bg-white card mx-auto">
+      <div class="card-body">
+        <div class="card-title">
+          <h3 class="text-center">Concrete CS Estimator</h3>
+          <h6 class="text-center"><sup>*</sup>CS-Compressive Strength</h6>
+        </div>
+        <form @submit.prevent="concrete_strength">
+          <div class="form-group">
+            <label for="cement"
+              >Cement:{% raw %}{{cement.ratio}} {% endraw %}
+            </label>
+            <input
+              type="range"
+              class="form-control"
+              min="1"
+              max="6"
+              id="concrete"
+              v-model="cement.ratio"
+              step="1"
+              list="cemlist"
+            />
+            <datalist id="cemlist">
+              <option value="1"></option>
+              <option value="2"></option>
+              <option value="3"></option>
+              <option value="4"></option>
+              <option value="5"></option>
+              <option value="6"></option>
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label for="sand">Sand:{% raw %}{{sand.ratio}}{% endraw %} </label>
+            <input
+              type="range"
+              class="form-control"
+              min="1"
+              max="6"
+              id="sand"
+              v-model="sand.ratio"
+              step="1"
+              list="sandlist"
+            />
+            <datalist id="sandlist">
+              <option value="1"></option>
+              <option value="2"></option>
+              <option value="3"></option>
+              <option value="4"></option>
+              <option value="5"></option>
+              <option value="6"></option>
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label for="aggregate"
+              >Aggregate:{% raw %}{{aggregate.ratio}}{% endraw %}</label
+            >
+            <input
+              type="range"
+              class="form-control"
+              min="1"
+              max="6"
+              id="aggregate"
+              v-model="aggregate.ratio"
+              step="1"
+              list="agglist"
+            />
+            <datalist id="agglist">
+              <option value="1"></option>
+              <option value="2"></option>
+              <option value="3"></option>
+              <option value="4"></option>
+              <option value="5"></option>
+              <option value="6"></option>
+            </datalist>
+          </div>
+          <button class="btn btn-info" type="submit">
+            GET CONCRETE STRENGTH
+          </button>
+        </form>
+        <div id="hello-world" class="modal">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li>
+                          Estimated Strength (28 days old): <span class="font-weight-bold text-info">{% raw %} {{(concreteStrength).toFixed(1)}} {% endraw %} MPa.</span>
+                        </li>
+                        <li>
+                          Max. Load (Cube Test): <span class="font-weight-bold text-info">{% raw %} {{(concreteStrength * 0.00015 *
+                          1e3).toFixed(1)}} {% endraw %} kN</span>
+                        </li>
+                        <li>
+                            Cube dimensions (150mm x 150mm x 150mm)
+                        </li>
+                      </ul> 
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    class Feature {
+      constructor(density,self) {
+        this.density = density;
+        this.ratio = 1;
+        this.self = self;
+      }
+      get total_ratio(){
+          return this.self.total_ratio
+      }
+      get volume() {
+        return this.ratio / this.total_ratio;
+      }
+      get mass() {
+        return this.density * this.volume;
+      }
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      new Vue({
+        el: "#app",
+        data() {
+          let basefeat = { ratio: 1 };
+          return {
+            cement: basefeat,
+            sand: basefeat,
+            aggregate: basefeat,
+            concreteStrength: 0,
+          };
+        },
+        computed: {
+          total_ratio() {
+            return (
+              parseInt(this.cement.ratio) +
+              parseInt(this.sand.ratio) +
+              parseInt(this.aggregate.ratio)
+            );
+          },
+        },
+        mounted() {
+          this.densities();
+        },
+        methods: {
+          densities() {
+            axios({
+              url: "/densities",
+            }).then((response) => {
+              let densities = response.data;
+              this.cement = new Feature(densities.cement,this);
+              this.sand = new Feature(densities.sand,this);
+              this.aggregate = new Feature(densities.aggregate,this);
+            });
+          },
+          concrete_strength() {
+            let cement_mass = this.cement.mass;
+            let sand_mass = this.sand.mass;
+            let aggregate_mass = this.aggregate.mass;
+            axios({
+              url: "/concrete_strength",
+              params: {
+                cement: cement_mass,
+                sand: sand_mass,
+                aggregate: aggregate_mass,
+              },
+            }).then((response) => {
+              this.concreteStrength = parseFloat(response.data);
+              $('#hello-world').modal({fadeDuration: 250});
+            });
+          },
+        },
+      });
+    });
+  </script>
+</html>
